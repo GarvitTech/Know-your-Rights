@@ -1,3 +1,7 @@
+# Know-your-RIghts
+⚖️ Know Your Democratic Rights is an AI-powered web app that helps users understand their legal and democratic rights based on their country and age. 🌍 Supports India, USA, Kuwait, and Russia with an AI assistant, personalised rights dashboard, and easy explanations to make civic knowledge accessible to everyone. 🤖📚
+>>>>>>> 89e37258c75bb5310b2a911596939882babeb030
+=======
 # ⚖️ Know Your Democratic Rights
 
 An AI-powered web application that educates citizens about their democratic and legal rights based on their **country**, **age**, and **role**.
@@ -239,3 +243,7 @@ This application provides **educational information only** and does **not** repl
 - Protected API routes
 - Input validation on all forms
 - Admin-only routes protected server-side
+=======
+# Know-your-RIghts
+⚖️ Know Your Democratic Rights is an AI-powered web app that helps users understand their legal and democratic rights based on their country and age. 🌍 Supports India, USA, Kuwait, and Russia with an AI assistant, personalised rights dashboard, and easy explanations to make civic knowledge accessible to everyone. 🤖📚
+>>>>>>> 89e37258c75bb5310b2a911596939882babeb030
