@@ -1,3 +1,10 @@
+// ============================================================
+// Project  : Know Your Democratic Rights
+// Author   : Garvit Pant
+// GitHub   : https://github.com/GarvitTech
+// © 2026 Garvit Pant. All rights reserved.
+// ============================================================
+
 import React from "react";
 
 export default function Disclaimer() {

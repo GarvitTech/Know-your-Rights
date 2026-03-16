@@ -1,3 +1,10 @@
+# ============================================================
+# Project  : Know Your Democratic Rights
+# Author   : Garvit Pant
+# GitHub   : https://github.com/GarvitTech
+# © 2026 Garvit Pant. All rights reserved.
+# ============================================================
+
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from typing import List, Optional

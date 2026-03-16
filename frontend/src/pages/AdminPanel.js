@@ -1,5 +1,13 @@
+// ============================================================
+// Project  : Know Your Democratic Rights
+// Author   : Garvit Pant
+// GitHub   : https://github.com/GarvitTech
+// © 2026 Garvit Pant. All rights reserved.
+// ============================================================
+
 import React, { useState, useEffect } from "react";
 import api from "../api";
+import { parseError, safeStr } from "../utils";
 
 const EMPTY = { country: "", category: "", title: "", explanation: "", source: "", example: "", min_age: 0, max_age: 120, tags: "", is_emergency: false };
 const COUNTRIES = ["India", "USA", "Kuwait", "Russia"];
@@ -35,7 +43,7 @@ export default function AdminPanel() {
       setEditId(null);
       fetchRights();
     } catch (err) {
-      setMsg("❌ " + (err.response?.data?.detail || "Error saving right"));
+      setMsg("❌ " + parseError(err, "Error saving right"));
     } finally {
       setLoading(false);
     }
@@ -68,7 +76,7 @@ export default function AdminPanel() {
         {/* Form */}
         <div className="card mb-8">
           <h2 className="font-bold text-gray-900 mb-4">{editId ? "✏️ Edit Right" : "➕ Add New Right"}</h2>
-          {msg && <div className={`px-4 py-3 rounded-xl text-sm mb-4 ${msg.startsWith("✅") ? "bg-green-50 text-green-700 border border-green-200" : "bg-red-50 text-red-700 border border-red-200"}`}>{msg}</div>}
+          {msg && <div className={`px-4 py-3 rounded-xl text-sm mb-4 ${msg.startsWith("✅") ? "bg-green-50 text-green-700 border border-green-200" : "bg-red-50 text-red-700 border border-red-200"}`}>{safeStr(msg)}</div>}
 
           <form onSubmit={handleSubmit} className="grid sm:grid-cols-2 gap-4">
             <div>

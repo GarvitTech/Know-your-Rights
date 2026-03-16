@@ -1,3 +1,10 @@
+# ============================================================
+# Project  : Know Your Democratic Rights
+# Author   : Garvit Pant
+# GitHub   : https://github.com/GarvitTech
+# © 2026 Garvit Pant. All rights reserved.
+# ============================================================
+
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
 from passlib.context import CryptContext

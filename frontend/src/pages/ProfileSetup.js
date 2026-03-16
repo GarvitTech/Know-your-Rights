@@ -1,7 +1,15 @@
+// ============================================================
+// Project  : Know Your Democratic Rights
+// Author   : Garvit Pant
+// GitHub   : https://github.com/GarvitTech
+// © 2026 Garvit Pant. All rights reserved.
+// ============================================================
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import api from "../api";
+import { parseError, safeStr } from "../utils";
 
 const COUNTRIES = ["India", "USA", "Kuwait", "Russia"];
 const COUNTRY_FLAGS = { India: "🇮🇳", USA: "🇺🇸", Kuwait: "🇰🇼", Russia: "🇷🇺" };
@@ -37,7 +45,7 @@ export default function ProfileSetup() {
       setSuccess(true);
       setTimeout(() => navigate("/dashboard"), 1200);
     } catch (err) {
-      setError(err.response?.data?.detail || "Failed to save profile");
+      setError(parseError(err, "Failed to save profile"));
     } finally {
       setLoading(false);
     }
@@ -59,7 +67,7 @@ export default function ProfileSetup() {
             </div>
           )}
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm mb-4">{error}</div>
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm mb-4">{safeStr(error)}</div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-5">

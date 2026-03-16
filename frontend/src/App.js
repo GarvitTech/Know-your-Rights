@@ -1,5 +1,30 @@
+// ============================================================
+// Project  : Know Your Democratic Rights
+// Author   : Garvit Pant
+// GitHub   : https://github.com/GarvitTech
+// © 2026 Garvit Pant. All rights reserved.
+// ============================================================
+
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+
+class ErrorBoundary extends React.Component {
+  state = { error: null };
+  static getDerivedStateFromError(e) { return { error: String(e?.message || e) }; }
+  render() {
+    if (this.state.error) return (
+      <div className="min-h-screen flex items-center justify-center bg-red-50 px-4">
+        <div className="bg-white rounded-2xl shadow p-8 max-w-md text-center">
+          <div className="text-4xl mb-3">⚠️</div>
+          <h2 className="text-lg font-bold text-gray-900 mb-2">Something went wrong</h2>
+          <p className="text-sm text-gray-500 mb-4">{this.state.error}</p>
+          <button onClick={() => window.location.reload()} className="btn-primary">Reload Page</button>
+        </div>
+      </div>
+    );
+    return this.props.children;
+  }
+}
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Welcome from "./pages/Welcome";
 import Login from "./pages/Login";
@@ -47,10 +72,12 @@ function AppRoutes() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <AppRoutes />
-      </BrowserRouter>
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <BrowserRouter>
+          <AppRoutes />
+        </BrowserRouter>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }

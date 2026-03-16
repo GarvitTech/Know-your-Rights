@@ -1,3 +1,10 @@
+# ============================================================
+# Project  : Know Your Democratic Rights
+# Author   : Garvit Pant
+# GitHub   : https://github.com/GarvitTech
+# © 2026 Garvit Pant. All rights reserved.
+# ============================================================
+
 from pydantic import BaseModel, EmailStr
 from typing import Optional
 
@@ -65,3 +72,27 @@ class Token(BaseModel):
 
 class ChatMessage(BaseModel):
     message: str
+
+
+class OTPRequest(BaseModel):
+    email: EmailStr
+    purpose: str  # 'signup' or 'login'
+
+
+class OTPVerify(BaseModel):
+    email: EmailStr
+    code: str
+    purpose: str
+
+
+class SignupWithOTP(BaseModel):
+    name: str
+    email: EmailStr
+    password: str
+    code: str
+
+
+class LoginWithOTP(BaseModel):
+    email: EmailStr
+    password: str
+    code: str

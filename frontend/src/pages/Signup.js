@@ -1,28 +1,73 @@
-import React, { useState } from "react";
+// ============================================================
+// Project  : Know Your Democratic Rights
+// Author   : Garvit Pant
+// GitHub   : https://github.com/GarvitTech
+// © 2026 Garvit Pant. All rights reserved.
+// ============================================================
+
+import React, { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { parseError, safeStr } from "../utils";
+import api from "../api";
 
 export default function Signup() {
-  const { signup } = useAuth();
   const navigate = useNavigate();
+  const [step, setStep] = useState(1);
   const [form, setForm] = useState({ name: "", email: "", password: "", confirm: "" });
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [resendTimer, setResendTimer] = useState(0);
+  const inputRefs = useRef([]);
 
-  const handleSubmit = async (e) => {
+  const startTimer = () => {
+    setResendTimer(60);
+    const iv = setInterval(() => setResendTimer((t) => { if (t <= 1) { clearInterval(iv); return 0; } return t - 1; }), 1000);
+  };
+
+  const handleSendOTP = async (e) => {
     e.preventDefault();
     setError("");
     if (form.password !== form.confirm) { setError("Passwords do not match"); return; }
     if (form.password.length < 6) { setError("Password must be at least 6 characters"); return; }
     setLoading(true);
     try {
-      await signup(form.name, form.email, form.password);
-      navigate("/profile-setup");
-    } catch (err) {
-      setError(err.response?.data?.detail || "Signup failed. Try again.");
-    } finally {
-      setLoading(false);
-    }
+      await api.post("/auth/send-otp", { email: form.email, purpose: "signup" });
+      setStep(2);
+      startTimer();
+    } catch (err) { setError(parseError(err, "Failed to send OTP")); }
+    finally { setLoading(false); }
+  };
+
+  const handleOtpChange = (i, val) => {
+    if (!/^\d*$/.test(val)) return;
+    const n = [...otp]; n[i] = val.slice(-1); setOtp(n);
+    if (val && i < 5) inputRefs.current[i + 1]?.focus();
+  };
+
+  const handleOtpKeyDown = (i, e) => {
+    if (e.key === "Backspace" && !otp[i] && i > 0) inputRefs.current[i - 1]?.focus();
+  };
+
+  const handleVerify = async (e) => {
+    e.preventDefault();
+    setError("");
+    const code = otp.join("");
+    if (code.length !== 6) { setError("Please enter the complete 6-digit OTP"); return; }
+    setLoading(true);
+    try {
+      await api.post("/auth/signup", { name: form.name, email: form.email, password: form.password, code });
+      navigate("/login?registered=1");
+    } catch (err) { setError(parseError(err, "Invalid or expired OTP")); }
+    finally { setLoading(false); }
+  };
+
+  const handleResend = async () => {
+    setError(""); setOtp(["", "", "", "", "", ""]);
+    try {
+      await api.post("/auth/send-otp", { email: form.email, purpose: "signup" });
+      startTimer();
+    } catch (err) { setError(parseError(err, "Failed to resend OTP")); }
   };
 
   return (
@@ -30,39 +75,65 @@ export default function Signup() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Link to="/"><img src="/logo.png" alt="Know Your Rights" className="h-14 w-14 object-contain mx-auto" /></Link>
-          <h1 className="text-2xl font-bold text-gray-900 mt-3">Create your account</h1>
-          <p className="text-gray-500 mt-1">Start learning your rights today</p>
+          <h1 className="text-2xl font-bold text-gray-900 mt-3">{step === 1 ? "Create your account" : "Verify your email"}</h1>
+          <p className="text-gray-500 mt-1">{step === 1 ? "Start learning your rights today" : `We sent a 6-digit code to ${form.email}`}</p>
         </div>
 
         <div className="card">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">{error}</div>
-            )}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Full Name</label>
-              <input type="text" className="input" placeholder="Your full name" required
-                value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Email</label>
-              <input type="email" className="input" placeholder="you@example.com" required
-                value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Password</label>
-              <input type="password" className="input" placeholder="Min. 6 characters" required
-                value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Confirm Password</label>
-              <input type="password" className="input" placeholder="Repeat password" required
-                value={form.confirm} onChange={(e) => setForm({ ...form, confirm: e.target.value })} />
-            </div>
-            <button type="submit" className="btn-primary w-full" disabled={loading}>
-              {loading ? "Creating account..." : "Create Account"}
-            </button>
-          </form>
+          {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm mb-4">{safeStr(error)}</div>}
+
+          {step === 1 ? (
+            <form onSubmit={handleSendOTP} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Full Name</label>
+                <input type="text" className="input" placeholder="Your full name" required
+                  value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Email</label>
+                <input type="email" className="input" placeholder="you@example.com" required
+                  value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Password</label>
+                <input type="password" className="input" placeholder="Min. 6 characters" required
+                  value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Confirm Password</label>
+                <input type="password" className="input" placeholder="Repeat password" required
+                  value={form.confirm} onChange={(e) => setForm({ ...form, confirm: e.target.value })} />
+              </div>
+              <button type="submit" className="btn-primary w-full" disabled={loading}>
+                {loading ? "Sending OTP..." : "Send Verification Code →"}
+              </button>
+            </form>
+          ) : (
+            <form onSubmit={handleVerify} className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-4 text-center">Enter 6-digit OTP</label>
+                <div className="flex gap-2 justify-center">
+                  {otp.map((digit, i) => (
+                    <input key={i} ref={(el) => (inputRefs.current[i] = el)}
+                      type="text" inputMode="numeric" maxLength={1} value={digit}
+                      onChange={(e) => handleOtpChange(i, e.target.value)}
+                      onKeyDown={(e) => handleOtpKeyDown(i, e)}
+                      className="w-12 h-14 text-center text-2xl font-bold border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all bg-gray-50 focus:bg-white" />
+                  ))}
+                </div>
+              </div>
+              <button type="submit" className="btn-primary w-full" disabled={loading}>
+                {loading ? "Verifying..." : "Verify & Create Account ✓"}
+              </button>
+              <div className="text-center">
+                {resendTimer > 0
+                  ? <p className="text-sm text-gray-400">Resend in <span className="font-semibold text-blue-600">{resendTimer}s</span></p>
+                  : <button type="button" onClick={handleResend} className="text-sm text-blue-600 font-semibold hover:underline">Resend OTP</button>}
+              </div>
+              <button type="button" onClick={() => { setStep(1); setError(""); setOtp(["","","","","",""]); }}
+                className="w-full text-sm text-gray-500 hover:text-gray-700">← Change details</button>
+            </form>
+          )}
 
           <p className="text-center text-sm text-gray-500 mt-5">
             Already have an account?{" "}

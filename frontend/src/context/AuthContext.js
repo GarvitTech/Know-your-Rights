@@ -1,3 +1,10 @@
+// ============================================================
+// Project  : Know Your Democratic Rights
+// Author   : Garvit Pant
+// GitHub   : https://github.com/GarvitTech
+// © 2026 Garvit Pant. All rights reserved.
+// ============================================================
+
 import React, { createContext, useContext, useState, useEffect } from "react";
 import api from "../api";
 
@@ -8,38 +15,29 @@ export function AuthProvider({ children }) {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const loadUser = async () => {
+    try {
+      const me = await api.get("/auth/me");
+      setUser(me.data);
+      try {
+        const prof = await api.get("/profile");
+        setProfile(prof.data);
+      } catch {}
+      return me.data;
+    } catch {
+      setUser(null);
+      setProfile(null);
+    }
+  };
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
-      api.get("/auth/me")
-        .then((r) => {
-          setUser(r.data);
-          return api.get("/profile");
-        })
-        .then((r) => setProfile(r.data))
-        .catch(() => {})
-        .finally(() => setLoading(false));
+      loadUser().finally(() => setLoading(false));
     } else {
       setLoading(false);
     }
   }, []);
-
-  const login = async (email, password) => {
-    const res = await api.post("/auth/login", { email, password });
-    localStorage.setItem("token", res.data.access_token);
-    const me = await api.get("/auth/me");
-    setUser(me.data);
-    try {
-      const prof = await api.get("/profile");
-      setProfile(prof.data);
-    } catch {}
-    return me.data;
-  };
-
-  const signup = async (name, email, password) => {
-    await api.post("/auth/signup", { name, email, password });
-    return login(email, password);
-  };
 
   const logout = () => {
     localStorage.removeItem("token");
@@ -55,7 +53,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading, login, signup, logout, refreshProfile }}>
+    <AuthContext.Provider value={{ user, profile, loading, loadUser, logout, refreshProfile }}>
       {children}
     </AuthContext.Provider>
   );

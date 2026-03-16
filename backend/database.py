@@ -1,3 +1,10 @@
+# ============================================================
+# Project  : Know Your Democratic Rights
+# Author   : Garvit Pant
+# GitHub   : https://github.com/GarvitTech
+# © 2026 Garvit Pant. All rights reserved.
+# ============================================================
+
 from sqlalchemy import create_engine, Column, Integer, String, Text, Boolean, DateTime, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
@@ -44,6 +51,16 @@ class Right(Base):
     max_age = Column(Integer, default=120)
     tags = Column(String, nullable=True)
     is_emergency = Column(Boolean, default=False)
+
+
+class OTPCode(Base):
+    __tablename__ = "otp_codes"
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String, index=True, nullable=False)
+    code = Column(String, nullable=False)
+    purpose = Column(String, nullable=False)  # 'signup' or 'login'
+    expires_at = Column(DateTime, nullable=False)
+    used = Column(Boolean, default=False)
 
 
 def get_db():
