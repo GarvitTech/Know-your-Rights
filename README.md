@@ -3,8 +3,11 @@
 [![Backend](https://img.shields.io/badge/FastAPI-✅-0052CC?style=flat&logo=fastapi)](https://fastapi.tiangolo.com)
 [![Frontend](https://img.shields.io/badge/React-Tailwind-61DAFB?style=flat&logo=react)](https://react.dev)
 [![Database](https://img.shields.io/badge/SQLite-✅-003B57?style=flat&logo=sqlite)](https://sqlite.org)
+[![GitHub Pages](https://img.shields.io/badge/GitHub_Pages-Deployed-brightgreen)](https://GarvitTech.github.io/Know-your-Rights)
 
 **AI-powered web app educating citizens about democratic rights** based on **country, age, and role**. Supports **India 🇮🇳, USA 🇺🇸, Kuwait 🇰🇼, Russia 🇷🇺**.
+
+**Live Demo**: [GarvitTech.github.io/Know-your-Rights](https://GarvitTech.github.io/Know-your-Rights)
 
 **Complete & Working!** 🎉 Live demo flow: Welcome → Login → Profile → Dashboard → Chat/Explore/Education.
 
@@ -67,7 +70,7 @@ npm start
 ### Backend (.env)
 ```bash
 cd backend
-cp .env.example .env  # Create if missing
+cp .env.example .env
 ```
 ```
 SECRET_KEY=your-super-secret-key-change-this
@@ -80,7 +83,6 @@ EMAIL_PASSWORD=app-password
 
 ### First Admin User
 ```bash
-# In backend terminal (DB auto-created)
 sqlite3 rights.db
 INSERT INTO users (name, email, hashed_password, is_admin) VALUES ('Admin', 'admin@admin.com', '$2b$12$KIXp8kW8nL9Qz9Qz9Qz9Qz9Qz9Qz9Qz9Qz9Qz9Qz9Qz9Qz9Qz9Qz', true);
 .quit
@@ -112,27 +114,29 @@ POST /api/chat           → \"police rights\"
 
 ## 🚀 Deployment
 
-### Production (Recommended)
-**Frontend**: Vercel (drag `frontend/` folder)
-**Backend**: Railway/Render (`backend/` + `Procfile`: `web: uvicorn main:app --host=0.0.0.0 --port=$PORT`)
+### Frontend: GitHub Pages (Live!)
+```bash
+cd frontend
+npm install -D gh-pages
+npm run deploy
+```
+**Live**: https://GarvitTech.github.io/Know-your-Rights
 
-**Docker** (backend):
+**Note**: Frontend static. Backend needs separate hosting (below).
+
+### Backend: Render/Railway (Recommended)
+1. Push repo
+2. Railway: `New Project` → Deploy backend
+3. `Procfile`: `web: uvicorn main:app --host=0.0.0.0 --port=$PORT`
+4. Add env vars from `.env`
+
+### Docker (Backend)
 ```dockerfile
 FROM python:3.12-slim
 COPY backend/ /app
 WORKDIR /app
 RUN pip install -r requirements.txt
 CMD [\"uvicorn\", \"main:app\", \"--host=0.0.0.0\", \"--port=8000\"]
-```
-
-### Local Production
-```bash
-# Backend
-pip install -r requirements.txt
-uvicorn main:app --host 0.0.0.0 --port 8000
-
-# Frontend (proxy to backend)
-npm start
 ```
 
 ## 🧪 Testing
@@ -142,60 +146,28 @@ npm start
 curl -X POST \"http://localhost:8000/api/auth/send-otp\" -d '{\"email\":\"test@test.com\",\"purpose\":\"signup\"}'
 ```
 
-**Frontend**: Full flow works end-to-end.
+**Frontend Build**: `cd frontend && npm run build && npx serve -s build`
 
 ## 📈 Rights Database
 
-**50+ entries** covering:
-- Civil/Human/Voting/Education/Worker/Digital Rights
-- Age-specific (min_age/max_age filtering)
-- Emergency flags
-- Legal sources/examples
+**50+ entries** covering Civil/Human/Voting/Education/Worker/Digital Rights with age/country filters.
 
-**Admin**: http://localhost:3000/admin → Add/edit rights.
+**Admin**: http://localhost:3000/admin → Add/edit.
 
 ## 🔒 Security
 
-✅ JWT tokens (7-day expiry)  
-✅ bcrypt password hashing  
-✅ SQLAlchemy ORM (SQL injection safe)  
-✅ Pydantic validation  
-✅ CORS protected  
-✅ Admin role checks  
+✅ JWT (7-day)
+✅ bcrypt
+✅ SQLAlchemy/Pydantic
+✅ CORS/Admin checks
 
-## 🤖 AI Chat (Template-Based)
+## 📱 Responsive
 
-**Prompts** country/age-aware. Examples:
-- \"arrest\" → Miranda rights (USA) or Article 22 (India)
-- Minors get child-specific responses
+✅ Tailwind mobile-first
 
-## 📱 Responsive Design
+## ⚠️ Disclaimer
 
-✅ Mobile-first Tailwind  
-✅ Touch-friendly cards  
-✅ Horizontal scroll tabs (mobile)  
-✅ Loading states/errors  
-
-## ⚠️ Legal Disclaimer
-
-> Educational only. Does **not** replace professional legal advice.
-
-## 🎉 Success Metrics
-
-✅ **All 10 task requirements** complete  
-✅ **4 countries** × multiple categories  
-✅ **Full user flow** working  
-✅ **Beginner-friendly** instructions  
-✅ **Deploy-ready**  
-✅ **Production-grade** security  
-
-## 📞 Support
-
-**Issues**: File GitHub issue  
-**Deploy**: Follow Vercel/Railway guides above  
-**Custom**: Contact developer
-
----
+Educational only. Not legal advice.
 
 **Built by [Garvit Pant](https://github.com/GarvitTech)**  
 **License**: MIT
