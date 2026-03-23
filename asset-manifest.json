@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/Know-your-Rights/static/css/main.4f552601.css",
+    "main.js": "/Know-your-Rights/static/js/main.dbdef86a.js",
+    "index.html": "/Know-your-Rights/index.html",
+    "main.4f552601.css.map": "/Know-your-Rights/static/css/main.4f552601.css.map",
+    "main.dbdef86a.js.map": "/Know-your-Rights/static/js/main.dbdef86a.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.4f552601.css",
+    "static/js/main.dbdef86a.js"
+  ]
+}

@@ -1,0 +1,15 @@
+# Python
+backend/venv/
+backend/__pycache__/
+backend/rights.db
+backend/*.pyc
+
+# Node
+frontend/node_modules/
+frontend/build/
+
+# Environment (keep .env out of git for security)
+backend/.env
+
+# OS
+.DS_Store
