@@ -12,11 +12,15 @@
   "devDependencies": {
     "tailwindcss": "^3.4.1",
     "autoprefixer": "^10.4.17",
-    "postcss": "^8.4.35"
+    "postcss": "^8.4.35",
+    "gh-pages": "^6.1.1"
   },
+  "homepage": "https://GarvitTech.github.io/Know-your-Rights",
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build"
+    "build": "react-scripts build",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "browserslist": {
     "production": [">0.2%", "not dead", "not op_mini all"],
