@@ -14,6 +14,13 @@ import Disclaimer from "../components/Disclaimer";
 
 const COUNTRY_FLAGS = { India: "🇮🇳", USA: "🇺🇸", Kuwait: "🇰🇼", Russia: "🇷🇺" };
 
+const QUICK_ACTIONS = [
+  { to: "/chat",          icon: "🤖", label: "Ask AI" },
+  { to: "/explore",       icon: "🔍", label: "Explore" },
+  { to: "/education",     icon: "📚", label: "Learn" },
+  { to: "/profile-setup", icon: "✏️", label: "Profile" },
+];
+
 export default function Dashboard() {
   const { user, profile } = useAuth();
   const [rights, setRights] = useState([]);
@@ -25,49 +32,53 @@ export default function Dashboard() {
     if (!profile) { setLoading(false); return; }
     Promise.all([
       api.get("/rights/my"),
-      api.get("/rights", { params: { country: profile.country, emergency: true } })
+      api.get("/rights", { params: { country: profile.country, emergency: true } }),
     ]).then(([r1, r2]) => {
       setRights(r1.data);
       setEmergency(r2.data);
-    }).finally(() => setLoading(false));
+    }).catch(() => {}).finally(() => setLoading(false));
   }, [profile]);
 
   if (!profile) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-        <div className="card text-center max-w-md">
+        <div className="card text-center max-w-md w-full">
           <div className="text-5xl mb-4">👤</div>
           <h2 className="text-xl font-bold text-gray-900 mb-2">Complete Your Profile</h2>
-          <p className="text-gray-500 mb-6">Set up your profile to see personalised rights for your country and age.</p>
-          <Link to="/profile-setup" className="btn-primary">Set Up Profile →</Link>
+          <p className="text-gray-500 mb-6 text-sm">Set up your profile to see personalised rights for your country and age.</p>
+          <Link to="/profile-setup" className="btn-primary inline-block">Set Up Profile →</Link>
         </div>
       </div>
     );
   }
 
   const categories = [...new Set(rights.map((r) => r.category))];
-  const filtered = activeTab === "all" ? rights : activeTab === "emergency" ? emergency : rights.filter((r) => r.category === activeTab);
+  const filtered =
+    activeTab === "all"       ? rights :
+    activeTab === "emergency" ? emergency :
+    rights.filter((r) => r.category === activeTab);
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-5xl mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="bg-gradient-to-r from-blue-700 to-indigo-700 rounded-2xl p-6 text-white mb-6">
-          <div className="flex items-center justify-between flex-wrap gap-4">
+      <div className="max-w-5xl mx-auto px-3 sm:px-4 py-5 sm:py-8">
+
+        {/* Header banner */}
+        <div className="bg-gradient-to-r from-blue-700 to-indigo-700 rounded-2xl p-4 sm:p-6 text-white mb-5">
+          <div className="flex items-start sm:items-center justify-between flex-wrap gap-3">
             <div>
-              <h1 className="text-2xl font-bold">Hello, {user?.name?.split(" ")[0]}! 👋</h1>
-              <p className="text-blue-200 mt-1">
+              <h1 className="text-xl sm:text-2xl font-bold">Hello, {user?.name?.split(" ")[0]}! 👋</h1>
+              <p className="text-blue-200 mt-1 text-sm">
                 {COUNTRY_FLAGS[profile.country]} {profile.country} · Age {profile.age}
-                {profile.occupation && ` · ${profile.occupation}`}
+                {profile.occupation ? ` · ${profile.occupation}` : ""}
               </p>
             </div>
-            <div className="flex gap-3">
-              <div className="bg-white/20 rounded-xl px-4 py-2 text-center">
-                <div className="text-2xl font-bold">{rights.length}</div>
-                <div className="text-xs text-blue-200">Your Rights</div>
+            <div className="flex gap-2 sm:gap-3">
+              <div className="bg-white/20 rounded-xl px-3 sm:px-4 py-2 text-center min-w-[60px]">
+                <div className="text-xl sm:text-2xl font-bold">{rights.length}</div>
+                <div className="text-xs text-blue-200">Rights</div>
               </div>
-              <div className="bg-white/20 rounded-xl px-4 py-2 text-center">
-                <div className="text-2xl font-bold">{emergency.length}</div>
+              <div className="bg-white/20 rounded-xl px-3 sm:px-4 py-2 text-center min-w-[60px]">
+                <div className="text-xl sm:text-2xl font-bold">{emergency.length}</div>
                 <div className="text-xs text-blue-200">Emergency</div>
               </div>
             </div>
@@ -75,15 +86,11 @@ export default function Dashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-          {[
-            { to: "/chat", icon: "🤖", label: "Ask AI Assistant" },
-            { to: "/explore", icon: "🔍", label: "Explore Rights" },
-            { to: "/education", icon: "📚", label: "Learn Rights" },
-            { to: "/profile-setup", icon: "✏️", label: "Edit Profile" },
-          ].map((a) => (
-            <Link key={a.to} to={a.to} className="card text-center hover:shadow-md transition-shadow hover:border-blue-200 border border-transparent">
-              <div className="text-2xl mb-1">{a.icon}</div>
+        <div className="grid grid-cols-4 gap-2 sm:gap-3 mb-5">
+          {QUICK_ACTIONS.map((a) => (
+            <Link key={a.to} to={a.to}
+              className="card text-center hover:shadow-md transition-shadow hover:border-blue-200 border border-transparent p-3 sm:p-4">
+              <div className="text-xl sm:text-2xl mb-1">{a.icon}</div>
               <div className="text-xs font-medium text-gray-700">{a.label}</div>
             </Link>
           ))}
@@ -91,27 +98,29 @@ export default function Dashboard() {
 
         <Disclaimer />
 
-        {/* Tabs */}
-        <div className="flex gap-2 mt-6 mb-4 overflow-x-auto pb-1">
+        {/* Tabs — horizontal scroll on mobile */}
+        <div className="flex gap-2 mt-5 mb-4 overflow-x-auto pb-1 scrollbar-hide -mx-1 px-1">
           <button onClick={() => setActiveTab("all")}
-            className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-colors ${activeTab === "all" ? "bg-blue-600 text-white" : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"}`}>
-            All Rights ({rights.length})
+            className={`px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-medium whitespace-nowrap flex-shrink-0 transition-colors ${activeTab === "all" ? "bg-blue-600 text-white" : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"}`}>
+            All ({rights.length})
           </button>
           <button onClick={() => setActiveTab("emergency")}
-            className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-colors ${activeTab === "emergency" ? "bg-red-600 text-white" : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"}`}>
+            className={`px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-medium whitespace-nowrap flex-shrink-0 transition-colors ${activeTab === "emergency" ? "bg-red-600 text-white" : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"}`}>
             🚨 Emergency ({emergency.length})
           </button>
           {categories.map((cat) => (
             <button key={cat} onClick={() => setActiveTab(cat)}
-              className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-colors ${activeTab === cat ? "bg-blue-600 text-white" : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"}`}>
+              className={`px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-medium whitespace-nowrap flex-shrink-0 transition-colors ${activeTab === cat ? "bg-blue-600 text-white" : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"}`}>
               {cat}
             </button>
           ))}
         </div>
 
-        {/* Rights List */}
+        {/* Rights list */}
         {loading ? (
-          <div className="flex justify-center py-16"><div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div></div>
+          <div className="flex justify-center py-16">
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600" />
+          </div>
         ) : filtered.length === 0 ? (
           <div className="card text-center py-12 text-gray-400">No rights found for this filter.</div>
         ) : (

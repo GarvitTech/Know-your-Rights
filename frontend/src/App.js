@@ -7,24 +7,6 @@
 
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-
-class ErrorBoundary extends React.Component {
-  state = { error: null };
-  static getDerivedStateFromError(e) { return { error: String(e?.message || e) }; }
-  render() {
-    if (this.state.error) return (
-      <div className="min-h-screen flex items-center justify-center bg-red-50 px-4">
-        <div className="bg-white rounded-2xl shadow p-8 max-w-md text-center">
-          <div className="text-4xl mb-3">⚠️</div>
-          <h2 className="text-lg font-bold text-gray-900 mb-2">Something went wrong</h2>
-          <p className="text-sm text-gray-500 mb-4">{this.state.error}</p>
-          <button onClick={() => window.location.reload()} className="btn-primary">Reload Page</button>
-        </div>
-      </div>
-    );
-    return this.props.children;
-  }
-}
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Welcome from "./pages/Welcome";
 import Login from "./pages/Login";
@@ -37,16 +19,42 @@ import Education from "./pages/Education";
 import AdminPanel from "./pages/AdminPanel";
 import Navbar from "./components/Navbar";
 
+class ErrorBoundary extends React.Component {
+  state = { error: null };
+  static getDerivedStateFromError(e) { return { error: String(e?.message || e) }; }
+  render() {
+    if (this.state.error) return (
+      <div className="min-h-screen flex items-center justify-center bg-red-50 px-4">
+        <div className="bg-white rounded-2xl shadow p-8 max-w-md w-full text-center">
+          <div className="text-4xl mb-3">⚠️</div>
+          <h2 className="text-lg font-bold text-gray-900 mb-2">Something went wrong</h2>
+          <p className="text-sm text-gray-500 mb-4 break-words">{this.state.error}</p>
+          <button onClick={() => window.location.reload()} className="btn-primary">Reload Page</button>
+        </div>
+      </div>
+    );
+    return this.props.children;
+  }
+}
+
+function Spinner() {
+  return (
+    <div className="flex items-center justify-center h-screen bg-gray-50">
+      <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600" />
+    </div>
+  );
+}
+
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth();
-  if (loading) return <div className="flex items-center justify-center h-screen"><div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div></div>;
-  return user ? children : <Navigate to="/login" />;
+  if (loading) return <Spinner />;
+  return user ? children : <Navigate to="/login" replace />;
 }
 
 function AdminRoute({ children }) {
   const { user, loading } = useAuth();
-  if (loading) return null;
-  return user?.is_admin ? children : <Navigate to="/dashboard" />;
+  if (loading) return <Spinner />;
+  return user?.is_admin ? children : <Navigate to="/dashboard" replace />;
 }
 
 function AppRoutes() {
@@ -64,7 +72,7 @@ function AppRoutes() {
         <Route path="/chat" element={<PrivateRoute><ChatAssistant /></PrivateRoute>} />
         <Route path="/education" element={<PrivateRoute><Education /></PrivateRoute>} />
         <Route path="/admin" element={<AdminRoute><AdminPanel /></AdminRoute>} />
-        <Route path="*" element={<Navigate to="/" />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </>
   );

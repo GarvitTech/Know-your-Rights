@@ -9,3 +9,4 @@ pydantic[email]>=2.10.0
 httpx>=0.28.0
 python-dotenv>=1.0.1
 aiosmtplib>=3.0.0
+google-genai>=1.0.0

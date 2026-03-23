@@ -2,29 +2,65 @@
 @tailwind components;
 @tailwind utilities;
 
-body { font-family: 'Inter', sans-serif; }
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
 
 @layer components {
   .btn-primary {
-    @apply bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-6 rounded-xl transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold py-2.5 px-6 rounded-xl transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed select-none;
   }
   .btn-secondary {
-    @apply bg-white hover:bg-gray-50 text-blue-600 font-semibold py-2.5 px-6 rounded-xl border border-blue-200 transition-all duration-200;
+    @apply bg-white hover:bg-gray-50 active:bg-gray-100 text-blue-600 font-semibold py-2.5 px-6 rounded-xl border border-blue-200 transition-all duration-200 select-none;
   }
   .card {
-    @apply bg-white rounded-2xl shadow-sm border border-gray-100 p-6;
+    @apply bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6;
   }
   .input {
-    @apply w-full border border-gray-200 rounded-xl px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-gray-50 focus:bg-white;
+    @apply w-full border border-gray-200 rounded-xl px-4 py-3 text-gray-800 text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-gray-50 focus:bg-white;
   }
   .badge {
-    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium;
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
   }
 }
 
-.chat-bubble-user { @apply bg-blue-600 text-white rounded-2xl rounded-br-sm px-4 py-3 max-w-xs ml-auto; }
-.chat-bubble-bot  { @apply bg-white border border-gray-100 text-gray-800 rounded-2xl rounded-bl-sm px-4 py-3 max-w-sm shadow-sm; }
+/* Chat bubbles — responsive max-width */
+.chat-bubble-user {
+  @apply bg-blue-600 text-white rounded-2xl rounded-br-sm px-4 py-3 shadow-sm;
+  max-width: min(80vw, 20rem);
+}
+.chat-bubble-bot {
+  @apply bg-white border border-gray-100 text-gray-800 rounded-2xl rounded-bl-sm px-4 py-3 shadow-sm;
+  max-width: min(85vw, 28rem);
+}
 
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #f1f5f9; }
-::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* Prevent horizontal overflow on mobile */
+#root { overflow-x: hidden; }
+
+/* Line clamp utility */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Tap highlight removal on mobile */
+button, a { -webkit-tap-highlight-color: transparent; }
+
+/* Safe area for notched phones */
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom); }

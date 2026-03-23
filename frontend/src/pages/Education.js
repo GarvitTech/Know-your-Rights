@@ -96,33 +96,24 @@ Article 41 — Every Kuwaiti has the right to work.`,
     content: `The Russian Constitution (1993) guarantees:
 
 Article 20 — Right to life.
-
 Article 21 — Human dignity is protected. Torture is prohibited.
-
 Article 23 — Right to privacy of correspondence and communications.
-
 Article 25 — Home is inviolable. No entry without court order.
-
 Article 28 — Freedom of conscience and religion.
-
 Article 29 — Freedom of thought and speech.
-
 Article 32 — Right to vote and participate in government.
-
 Article 37 — Right to work, fair wages, and safe conditions.
-
 Article 43 — Right to free general education.
-
 Article 48 — Right to qualified legal assistance.`,
     scenario: {
       title: "Scenario: Home Search",
       situation: "Police arrive at your door wanting to search your home.",
       rights: "Under Article 25, your home is inviolable. Police need a court-issued search warrant to enter.",
-      action: "Ask to see the warrant. If they have no warrant and it's not an emergency situation defined by law, you can refuse entry and contact a lawyer immediately."
+      action: "Ask to see the warrant. If they have no warrant and it's not an emergency, you can refuse entry and contact a lawyer immediately."
     }
   },
   {
-    id: 5, flag: "🌍", country: "Universal", title: "Know Your Rights When Arrested — Any Country",
+    id: 5, flag: "🌍", country: "Universal", title: "Know Your Rights When Arrested",
     duration: "3 min read", level: "Essential",
     content: `Regardless of country, these are universal principles when arrested:
 
@@ -179,35 +170,45 @@ Cybercrime Protections
   },
 ];
 
+const LEVEL_COLORS = {
+  Essential:    "bg-red-100 text-red-700",
+  Intermediate: "bg-yellow-100 text-yellow-700",
+  Beginner:     "bg-green-100 text-green-700",
+};
+
 export default function Education() {
   const [selected, setSelected] = useState(null);
 
-  if (selected) {
+  if (selected !== null) {
     const lesson = LESSONS.find((l) => l.id === selected);
     return (
       <div className="min-h-screen bg-gray-50">
-        <div className="max-w-3xl mx-auto px-4 py-8">
-          <button onClick={() => setSelected(null)} className="flex items-center gap-2 text-blue-600 hover:text-blue-800 mb-6 font-medium">
+        <div className="max-w-3xl mx-auto px-3 sm:px-4 py-5 sm:py-8">
+          <button onClick={() => setSelected(null)}
+            className="flex items-center gap-2 text-blue-600 hover:text-blue-800 mb-5 font-medium text-sm">
             ← Back to Lessons
           </button>
 
           <div className="card mb-4">
-            <div className="flex items-center gap-3 mb-4">
-              <span className="text-4xl">{lesson.flag}</span>
-              <div>
-                <span className="badge bg-blue-100 text-blue-700 mb-1">{lesson.country}</span>
-                <h1 className="text-xl font-bold text-gray-900">{lesson.title}</h1>
-                <p className="text-sm text-gray-500 mt-0.5">{lesson.duration} · {lesson.level}</p>
+            <div className="flex items-start gap-3 mb-4">
+              <span className="text-3xl sm:text-4xl flex-shrink-0">{lesson.flag}</span>
+              <div className="min-w-0">
+                <div className="flex flex-wrap gap-2 mb-1">
+                  <span className="badge bg-blue-100 text-blue-700">{lesson.country}</span>
+                  <span className={`badge ${LEVEL_COLORS[lesson.level]}`}>{lesson.level}</span>
+                </div>
+                <h1 className="text-lg sm:text-xl font-bold text-gray-900">{lesson.title}</h1>
+                <p className="text-sm text-gray-500 mt-0.5">{lesson.duration}</p>
               </div>
             </div>
-            <div className="prose prose-sm max-w-none">
-              <pre className="whitespace-pre-wrap font-sans text-gray-700 text-sm leading-relaxed">{lesson.content}</pre>
-            </div>
+            <pre className="whitespace-pre-wrap font-sans text-gray-700 text-sm leading-relaxed">
+              {lesson.content}
+            </pre>
           </div>
 
           {/* Scenario */}
-          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-6 mb-4">
-            <h3 className="font-bold text-blue-900 text-lg mb-3">🎭 {lesson.scenario.title}</h3>
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-4 sm:p-6 mb-4">
+            <h3 className="font-bold text-blue-900 text-base sm:text-lg mb-3">🎭 {lesson.scenario.title}</h3>
             <div className="space-y-3">
               <div>
                 <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Situation</p>
@@ -232,26 +233,26 @@ export default function Education() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-5xl mx-auto px-4 py-8">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">📚 Learn Your Rights</h1>
-          <p className="text-gray-500 mt-1">Simple lessons with real-life scenarios to understand your rights</p>
+      <div className="max-w-5xl mx-auto px-3 sm:px-4 py-5 sm:py-8">
+        <div className="mb-5">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">📚 Learn Your Rights</h1>
+          <p className="text-gray-500 text-sm mt-1">Simple lessons with real-life scenarios</p>
         </div>
 
         <Disclaimer />
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mt-5">
           {LESSONS.map((lesson) => (
             <button key={lesson.id} onClick={() => setSelected(lesson.id)}
-              className="card text-left hover:shadow-md transition-all hover:border-blue-200 border border-transparent group">
-              <div className="text-3xl mb-3">{lesson.flag}</div>
-              <div className="flex items-center gap-2 mb-2">
+              className="card text-left hover:shadow-md transition-all hover:border-blue-200 border border-transparent group p-4 sm:p-6">
+              <div className="text-2xl sm:text-3xl mb-3">{lesson.flag}</div>
+              <div className="flex items-center gap-2 mb-2 flex-wrap">
                 <span className="badge bg-blue-100 text-blue-700 text-xs">{lesson.country}</span>
-                <span className={`badge text-xs ${lesson.level === "Essential" ? "bg-red-100 text-red-700" : lesson.level === "Intermediate" ? "bg-yellow-100 text-yellow-700" : "bg-green-100 text-green-700"}`}>
-                  {lesson.level}
-                </span>
+                <span className={`badge text-xs ${LEVEL_COLORS[lesson.level]}`}>{lesson.level}</span>
               </div>
-              <h3 className="font-semibold text-gray-900 text-sm group-hover:text-blue-700 transition-colors">{lesson.title}</h3>
+              <h3 className="font-semibold text-gray-900 text-sm group-hover:text-blue-700 transition-colors leading-snug">
+                {lesson.title}
+              </h3>
               <p className="text-xs text-gray-400 mt-2">{lesson.duration}</p>
             </button>
           ))}
